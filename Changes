@@ -1,5 +1,8 @@
 Revision history for Kaiten-Container
 
+0.23    2011-12-19 12:35 PM
+        Fix tests and docs
+
 0.21    2011-12-19 05:32 AM
         Fix MANIFEST to add tests
 

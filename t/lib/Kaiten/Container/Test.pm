@@ -12,8 +12,8 @@ use DBI;
 
 #======== DEVELOP THINGS ===========>
 # develop mode
-use Smart::Comments;
-use Data::Printer;
+#use Smart::Comments;
+#use Data::Printer;
 
 #======== DEVELOP THINGS ===========<
 

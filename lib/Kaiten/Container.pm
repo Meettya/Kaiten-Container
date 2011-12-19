@@ -12,11 +12,11 @@ Kaiten::Container - Simples dependency-injection (DI) container, distant relatio
 
 =head1 VERSION
 
-Version 0.21
+Version 0.23
 
 =cut
 
-our $VERSION = '0.21';
+our $VERSION = '0.23';
 
 use Moo;
 
@@ -110,15 +110,15 @@ Its possible add all entities later, with C<add> method.
 
 Entity MUST have:
 
-  - unique name
+- unique name
   
-  - |handler| sub - its return something helpfully
+- |handler| sub - its return something helpfully
   
-  - |probe| sub - its must return true, as first arguments this sub got |handler| sub result.
+- |probe| sub - its must return true, as first arguments this sub got |handler| sub result.
 
 Entity MAY have settings hashref:
 
-  - 'reusable' if it setted to true - KC try to use cache. If cached handler DONT pass probe KC try to create new one instance.
+- 'reusable' if it setted to true - KC try to use cache. If cached handler DONT pass probe KC try to create new one instance.
 
 NB. New instance always be tested by call |probe|. 
 If you dont want test handler - just cheat with 
