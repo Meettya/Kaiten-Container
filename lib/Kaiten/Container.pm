@@ -67,7 +67,7 @@ No more humongous multi-level dependency configuration, service provider and etc
 
 You got what you put on, no more, no less.
 
-Ok, little bit more - L<Kaiten::Container> run |probe| sub every time when you want to take something to ensure all working properly.
+Ok, a little bit more - L<Kaiten::Container> run |probe| sub every time when you want to take something to ensure all working properly.
 
 And another one - KC try to re-use |handler| return if it requested.
 
@@ -313,7 +313,7 @@ L<http://search.cpan.org/dist/Kaiten-Container/>
 
 =head1 SEE ALSO
 
-L<Bread::Broad> - a Moose-based DI framework
+L<Bread::Board> - a Moose-based DI framework
 
 L<IOC> - the ancestor of L<Bread::Board>
 
