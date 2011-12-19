@@ -66,7 +66,9 @@ Later you take it by name and got yours code result fresh and crispy.
 No more humongous multi-level dependency configuration, service provider and etc.
 
 You got what you put on, no more, no less.
+
 Ok, little bit more - L<Kaiten::Container> run |probe| sub every time when you want to take something to ensure all working properly.
+
 And another one - KC try to re-use |handler| return if it requested.
 
     use Kaiten::Container;
