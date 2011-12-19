@@ -12,11 +12,11 @@ Kaiten::Container - Simples dependency-injection (DI) container, distant relatio
 
 =head1 VERSION
 
-Version 0.19
+Version 0.21
 
 =cut
 
-our $VERSION = '0.19';
+our $VERSION = '0.21';
 
 use Moo;
 
