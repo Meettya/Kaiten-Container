@@ -12,11 +12,11 @@ Kaiten::Container - Simples dependency-injection (DI) container, distant relatio
 
 =head1 VERSION
 
-Version 0.27
+Version 0.31
 
 =cut
 
-our $VERSION = '0.27';
+our $VERSION = '0.31';
 
 use Moo;
 
@@ -32,8 +32,8 @@ use Scalar::Util qw(reftype);
 my $error = [
               'Error: handler [%s] not defined at [init], die ',
               'Error: handler [%s] init wrong, [probe] sub not defined, die ',
-              'Warning: handler [%s] don`t pass [probe] check on reuse, try to create new one, working ',
-              'Error: handler [%s] don`t pass [probe] check on create, somthing wrong, die ',
+              'Warning: handler [%s] don`t pass [probe] check on reuse with message [ %s ], try to create new one, working ',
+              'Error: handler [%s] don`t pass [probe] check on create, with message [ %s ], die  ',
               'Error: [init] value must be HASHREF only, die ',
               'Error: [add_handler] method REQUIRE handlers at args, die',
               'Error: handler [%s] exists, to rewrite handler remove it at first, die ',
@@ -210,7 +210,7 @@ sub get_by_name {
 
         # checkout handler and wipe it if it don`t pass [probe]
         unless ( eval { $handler_config->{probe}->($result) } ) {
-            carp sprintf( $error->[2], $handler_name ) if DEBUG;
+            carp sprintf( $error->[2], $handler_name, $@ ) if DEBUG;
             $result = undef;
         }
     }
@@ -220,7 +220,7 @@ sub get_by_name {
 
         # checkout handler and die it if dont pass [probe]
         unless ( eval { $handler_config->{probe}->($result) } ) {
-            croak sprintf( $error->[3], $handler_name );
+            croak sprintf( $error->[3], $handler_name, $@ );
         }
     }
 
