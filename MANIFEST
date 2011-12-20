@@ -9,8 +9,10 @@ META.yml
 README
 t/00-load.t
 t/01-functional.t
+t/02-deep_depency_resolving.t
 t/boilerplate.t
 t/lib/Kaiten/Container/Test.pm
+t/lib/Kaiten/Container/TestDeepDependency.pm
 t/manifest.t
 t/pod-coverage.t
 t/pod.t

@@ -2,7 +2,7 @@ package Kaiten::Container;
 
 use v5.10;
 use strict;
-use warnings;
+use warnings FATAL => 'recursion';
 
 use constant::def DEBUG => $ENV{Kaiten_Container_DEBUG} || 0;
 
@@ -12,11 +12,11 @@ Kaiten::Container - Simples dependency-injection (DI) container, distant relatio
 
 =head1 VERSION
 
-Version 0.23
+Version 0.25
 
 =cut
 
-our $VERSION = '0.23';
+our $VERSION = '0.25';
 
 use Moo;
 
@@ -27,9 +27,7 @@ use Scalar::Util qw(reftype);
 # develop mode
 #use Smart::Comments;
 #use Data::Printer;
-
 #======== DEVELOP THINGS ===========<
-
 
 my $error = [
               'Error: handler [%s] not defined at [init], die ',
@@ -71,14 +69,18 @@ Ok, a little bit more - L<Kaiten::Container> run |probe| sub every time when you
 
 And another one - KC try to re-use |handler| return if it requested.
 
+Ah, last but not least - KC MAY resolve deep dependencies, if you need it. Really. A piece of cake!
+
     use Kaiten::Container;
 
     my $config = {
          ExampleP => {
-             handler  => sub { return DBI->connect( "dbi:ExampleP:", "", "", { RaiseError => 1 } ) or die $DBI::errstr },
+             handler  => sub {
+                return DBI->connect( "dbi:ExampleP:", "", "", { RaiseError => 1 } ) or die $DBI::errstr;
+              },
              probe    => sub { shift->ping() },
              settings => { reusable => 1 }
-         }
+         },
     };
 
     my $container = Kaiten::Container->new( init => $config );
@@ -95,8 +97,26 @@ This method create container with entities as |init| configuration hash values, 
 Its possible add all entities later, with C<add> method.
 
     my $config = {
+         examplep_config => {
+            handler  => sub { { RaiseError => 1 } },
+            probe    => sub { 1 },
+            settings => { reusable => 1 },
+         },
+         examplep_dbd => {
+            handler  => sub { "dbi:ExampleP:" },
+            probe    => sub { 1 },
+            settings => { reusable => 1 },      
+         },
+         # yap! this is deep dependency example.
          ExampleP => {
-             handler  => sub { return DBI->connect( "dbi:ExampleP:", "", "", { RaiseError => 1 } ) or die $DBI::errstr },
+             handler  => sub { 
+                my $c = shift;
+                
+                my $dbd = $c->get_by_name('examplep_dbd');
+                my $conf = $c->get_by_name('examplep_config');
+                
+                return DBI->connect( $dbd, "", "", $conf ) or die $DBI::errstr;
+              },
              probe    => sub { shift->ping() },
              settings => { reusable => 1 }
          },
@@ -126,6 +146,25 @@ If you dont want test handler - just cheat with
     probe => sub { 1 }
 
 but its bad idea, I notice you.
+
+=head3 Something about deep dependencies
+
+Its here, its worked.
+
+             handler  => sub {
+                # any handler sub get container as first arg
+                my $container = shift;
+                
+                my $dbd = $container->get_by_name('examplep_dbd');
+                my $conf = $container->get_by_name('examplep_config');
+                
+                return DBI->connect( $dbd, "", "", $conf ) or die $DBI::errstr;
+              },
+
+Warning! Its been worked predictably only at ONE container scope.
+Mixing deep dependencies from different containers seems... hm, you know, very strange.
+
+What about circular dependencies? Its cause 'die'. Don`t do that.
 
 =head2 C<get_by_name($what)>
 
@@ -160,7 +199,7 @@ sub get_by_name {
     }
 
     unless ($result) {
-        $result = $self->init->{$handler_name}{handler}->();
+        $result = $self->init->{$handler_name}{handler}->($self);
 
         # checkout handler and die it if dont pass [probe]
         unless ( eval { $handler_config->{probe}->($result) } ) {
@@ -235,6 +274,7 @@ sub remove {
         croak sprintf( $error->[8], $handler_name ) if !exists $self->init->{$handler_name};
 
         delete $self->init->{$handler_name};
+
         # clear cache if it exists too
         delete $self->_cache->{$handler_name} if exists $self->_cache->{$handler_name};
 
@@ -263,6 +303,35 @@ sub show_list {
     my @result = sort keys %{ $self->init };
     return wantarray ? @result : \@result;
 
+}
+
+=pod
+
+=head2 C<test(@what?)>
+
+Use this method to test handlers works correctly.
+If no handlers name given - will be tested ALL.
+
+    my $test_result = $container->test();
+
+Method return 1 if it seems all ok, or die.
+
+B<READ THIS TWISE:>
+
+I<B<Very helpfully for TEST suite, especially if deep dependency used.
+Using this method at production are pointless, remember that.>>
+
+=cut
+
+sub test {
+    my $self     = shift;
+    my @handlers = @_;
+
+    @handlers = $self->show_list unless scalar @handlers;
+
+    $self->get_by_name($_) foreach @handlers;
+
+    return 1;
 }
 
 =head1 AUTHOR

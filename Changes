@@ -1,5 +1,8 @@
 Revision history for Kaiten-Container
 
+0.25    2011-12-20 03:51 AM
+        Add deep dependencies resolving
+
 0.23    2011-12-19 12:35 PM
         Fix tests and docs
 

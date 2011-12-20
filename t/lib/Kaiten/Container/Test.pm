@@ -122,20 +122,35 @@ sub check_reuse_failed : Test(3) {
 
 }
 
-sub check_ExampleP_example : Test(3) {
+sub check_ExampleP_example : Test(4) {
     my $self = shift;
 
   SKIP: {
 
-        skip 'No ExampleP DBD finded, strange...', 3 unless eval "require DBD::ExampleP";
+        skip 'No ExampleP DBD finded, strange...', 4 unless eval "require DBD::ExampleP";
 
-        my $config = {
-                       ExampleP => {
-                           handler => sub { return DBI->connect( "dbi:ExampleP:", "", "", { RaiseError => 1 } ) or die $DBI::errstr },
-                           probe => sub { shift->ping() },
-                           settings => { reusable => 1 }
-                                   }
-                     };
+    my $config = {
+         examplep_config => {
+            handler  => sub { { RaiseError => 1 } },
+            probe    => sub { 1 },
+            settings => { reusable => 1 },
+         },
+         examplep_dbd => {
+            handler  => sub { "dbi:ExampleP:" },
+            probe    => sub { 1 },
+            settings => { reusable => 1 },      
+         },
+         ExampleP => {
+             handler  => sub { 
+                my $c = shift;
+                my $dbd = $c->get_by_name('examplep_dbd');
+                my $conf = $c->get_by_name('examplep_config');
+                return DBI->connect( $dbd, "", "", $conf ) or die $DBI::errstr;
+              },
+             probe    => sub { shift->ping() },
+             settings => { reusable => 1 }
+         },
+    };
 
         my $conn_storage = Kaiten::Container->new( init => $config );
 
@@ -144,6 +159,8 @@ sub check_ExampleP_example : Test(3) {
         warnings_are { $conn_storage->get_by_name('ExampleP') }[], "no warnings in second touch ExampleP";
 
         ok( !$@, 'no error defined at ExampleP' );
+        
+        ok( $conn_storage->get_by_name('ExampleP')->{RaiseError}, 'deep dependency worked properly');
 
     }
 

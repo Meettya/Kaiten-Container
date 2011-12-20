@@ -29,6 +29,7 @@ And another one - KC try to re-use |handler| return if it requested.
 All done, now we are have container and may get DB handler on call.
 Simple!
 
+Ah, deep dependencies worked, see documentation.
 
 INSTALLATION
 
