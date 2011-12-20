@@ -12,11 +12,11 @@ Kaiten::Container - Simples dependency-injection (DI) container, distant relatio
 
 =head1 VERSION
 
-Version 0.25
+Version 0.27
 
 =cut
 
-our $VERSION = '0.25';
+our $VERSION = '0.27';
 
 use Moo;
 
@@ -65,9 +65,9 @@ No more humongous multi-level dependency configuration, service provider and etc
 
 You got what you put on, no more, no less.
 
-Ok, a little bit more - L<Kaiten::Container> run |probe| sub every time when you want to take something to ensure all working properly.
+Ok, a little bit more - L<Kaiten::Container> run I<probe> sub every time when you want to take something to ensure all working properly.
 
-And another one - KC try to re-use |handler| return if it requested.
+And another one - KC try to re-use I<handler> return if it requested.
 
 Ah, last but not least - KC MAY resolve deep dependencies, if you need it. Really. A piece of cake!
 
@@ -93,7 +93,7 @@ Simple!
 
 =head2 C<new(%init_configuration?)>
 
-This method create container with entities as |init| configuration hash values, also may called without config.
+This method create container with entities as I<init> configuration hash values, also may called without config.
 Its possible add all entities later, with C<add> method.
 
     my $config = {
@@ -128,47 +128,64 @@ Its possible add all entities later, with C<add> method.
 
     my $container = Kaiten::Container->new( init => $config );  
 
-Entity MUST have:
+Entity have next stucture:
 
-- unique name
-  
-- |handler| sub - its return something helpfully
-  
-- |probe| sub - its must return true, as first arguments this sub got |handler| sub result.
+=over
 
-Entity MAY have settings hashref:
+=item * unique name (REQUIRED)
 
-- 'reusable' if it setted to true - KC try to use cache. If cached handler DONT pass probe KC try to create new one instance.
+This name used at C<get_by_name> method.
 
-NB. New instance always be tested by call |probe|. 
+=over
+
+=item - C<handler> (REQUIRED)
+
+This sub will be executed on C<get_by_name> method, at first argument its got I<container> itself.
+
+=item - C<probe> (REQUIRED)
+
+This sub must return true, as first arguments this sub got I<handler> sub result.
+
+=item - C<settings> (OPTIONAL)
+
+- C<reusable> (OPTIONAL)
+
+If it setted to true - KC try to use cache. If cached handler DONT pass I<probe> KC try to create new one instance.
+
+=back
+
+=back
+
+NB. New instance always be tested by call I<probe>. 
 If you dont want test handler - just cheat with 
 
     probe => sub { 1 }
 
-but its bad idea, I notice you.
+but its sharp things, handle with care.
 
 =head3 Something about deep dependencies
 
 Its here, its worked.
 
-             handler  => sub {
-                # any handler sub get container as first arg
-                my $container = shift;
-                
-                my $dbd = $container->get_by_name('examplep_dbd');
-                my $conf = $container->get_by_name('examplep_config');
-                
-                return DBI->connect( $dbd, "", "", $conf ) or die $DBI::errstr;
-              },
+    handler  => sub {
+      # any handler sub get container as first arg
+      my $container = shift;
+      
+      my $dbd = $container->get_by_name('examplep_dbd');
+      my $conf = $container->get_by_name('examplep_config');
+      
+      return DBI->connect( $dbd, "", "", $conf ) or die $DBI::errstr;
+    },
 
 Warning! Its been worked predictably only at ONE container scope.
 Mixing deep dependencies from different containers seems... hm, you know, very strange.
+And dangerous.
 
 What about circular dependencies? Its cause 'die'. Don`t do that.
 
 =head2 C<get_by_name($what)>
 
-Use this method to execute |handler| sub and get it as result.
+Use this method to execute I<handler> sub and get it as result.
 
     my $dbh = $container->get_by_name('ExampleP');
     # now $dbh contain normal handler to ExampleP DB
@@ -293,7 +310,7 @@ Use this method to view list of available handler in container
     
     # @handler_list == ( 'explode', 'test' )
 
-NB. Entities sorted with perl sort function
+NB. Entities sorted with perl C<sort> function
 
 =cut
 
@@ -316,10 +333,8 @@ If no handlers name given - will be tested ALL.
 
 Method return 1 if it seems all ok, or die.
 
-B<READ THIS TWISE:>
-
-I<B<Very helpfully for TEST suite, especially if deep dependency used.
-Using this method at production are pointless, remember that.>>
+I<Very helpfully for TEST suite, especially if deep dependency used.
+Using this method at production are may helpfully too, but may couse overhead.>
 
 =cut
 
