@@ -308,7 +308,7 @@ Use this method to view list of available handler in container
 
     my @handler_list = $container->show_list;
     
-    # @handler_list == ( 'explode', 'test' )
+    # @handler_list == ( 'examplep_config', 'examplep_dbd', 'explode', 'test' )
 
 NB. Entities sorted with perl C<sort> function
 
