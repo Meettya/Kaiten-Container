@@ -49,14 +49,15 @@ sub create_container {
             handler => sub {
                 my $c = shift;
 
-                my $loger_engine = do {
-                
-                    given ( $config->{logger} ) {
-                        when ('engine1') { 'system_logger1' };
-                        when ('engine2') { 'system_logger2' };
-                    }
 
-                };
+                my $loger_engine;
+                if ( $config->{logger} eq 'engine1' ){
+                  $loger_engine = 'system_logger1';
+                }
+                elsif( $config->{logger} eq 'engine2' ){
+                  $loger_engine = 'system_logger2';
+                }
+                
                 my $selected_logger = $c->get_by_name($loger_engine);
 
                 my $ilogger;
@@ -245,11 +246,12 @@ sub output {
 
     my $engine = $self->engine;
 
-    given ( ref $engine ) {
-
-        when ('LoggerEngine')  { $engine->output($message) };
-        when ('LoggerEngine2') { $engine->output2($message) }
-
+    # no need check |else| - container filter it
+    if ( ref $engine eq 'LoggerEngine' ){
+      $engine->output($message)
+    }
+    elsif( ref $engine eq 'LoggerEngine2' ){
+      $engine->output2($message)
     }
 
 }

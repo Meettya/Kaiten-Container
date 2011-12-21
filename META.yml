@@ -22,7 +22,7 @@ name: Kaiten-Container
 provides:
   Kaiten::Container:
     file: lib/Kaiten/Container.pm
-    version: 0.35
+    version: 0.37
 requires:
   Carp: 0
   Moo: 0
@@ -31,4 +31,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: https://github.com/Meettya/Kaiten-Container/
-version: 0.35
+version: 0.37

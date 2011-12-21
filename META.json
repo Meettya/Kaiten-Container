@@ -42,7 +42,7 @@
    "provides" : {
       "Kaiten::Container" : {
          "file" : "lib/Kaiten/Container.pm",
-         "version" : "0.35"
+         "version" : "0.37"
       }
    },
    "release_status" : "stable",
@@ -54,5 +54,5 @@
          "url" : "https://github.com/Meettya/Kaiten-Container/"
       }
    },
-   "version" : "0.35"
+   "version" : "0.37"
 }

@@ -1,5 +1,8 @@
 Revision history for Kaiten-Container
 
+0.37    2011-12-22 01:24 AM
+        Fix test - change |given| to |if|
+
 0.35    2011-12-21 07:58 PM
         Change DEBUG mode settings to normal properties (from abs::def),
         add CANCEL_REUSE properties, fix docs, add another example.
