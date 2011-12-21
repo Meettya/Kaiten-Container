@@ -19,8 +19,6 @@ use DBI;
 
 use lib::abs qw(../../../../lib);
 
-# to turn on DEBUG mode
-use constant::abs 'Kaiten::Container::DEBUG' => 1;
 use Kaiten::Container;
 
 my $configutarion_safe = {
@@ -60,8 +58,10 @@ sub make_fixture : Test(setup) {
     my %init_config_safe       = %$configutarion_safe;
     my %init_config_explodable = %$configutarion_explodable;
 
-    $self->{connection_storage_safe}       = Kaiten::Container->new( init => \%init_config_safe );
-    $self->{connection_storage_explodable} = Kaiten::Container->new( init => \%init_config_explodable );
+
+    # new key to turn on DEBUG mode
+    $self->{connection_storage_safe}       = Kaiten::Container->new( init => \%init_config_safe, DEBUG => 1 );
+    $self->{connection_storage_explodable} = Kaiten::Container->new( init => \%init_config_explodable, DEBUG => 1 );
 
 }
 
@@ -152,7 +152,7 @@ sub check_ExampleP_example : Test(4) {
          },
     };
 
-        my $conn_storage = Kaiten::Container->new( init => $config );
+        my $conn_storage = Kaiten::Container->new( init => $config, DEBUG => 1 );
 
         warnings_are { $conn_storage->get_by_name('ExampleP') }[], "no warnings in first touch ExampleP";
 

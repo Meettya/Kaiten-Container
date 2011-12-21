@@ -1,5 +1,9 @@
 Revision history for Kaiten-Container
 
+0.35    2011-12-21 07:58 PM
+        Change DEBUG mode settings to normal properties (from abs::def),
+        add CANCEL_REUSE properties, fix docs, add another example.
+
 0.31    2011-12-20 10:38 PM
         Add simple example to show main futures at one place.
 

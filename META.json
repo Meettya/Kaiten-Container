@@ -17,10 +17,11 @@
       "build" : {
          "requires" : {
             "DBI" : 0,
+            "Moo" : 0,
+            "Term::ANSIColor" : 0,
             "Test::Class" : 0,
             "Test::More" : 0,
             "Test::Warn" : 0,
-            "constant::abs" : 0,
             "lib::abs" : 0
          }
       },
@@ -34,8 +35,6 @@
             "Carp" : 0,
             "Moo" : 0,
             "Scalar::Util" : 0,
-            "constant::abs" : 0,
-            "constant::def" : 0,
             "perl" : "5.01"
          }
       }
@@ -43,7 +42,7 @@
    "provides" : {
       "Kaiten::Container" : {
          "file" : "lib/Kaiten/Container.pm",
-         "version" : "0.31"
+         "version" : "0.35"
       }
    },
    "release_status" : "stable",
@@ -55,5 +54,5 @@
          "url" : "https://github.com/Meettya/Kaiten-Container/"
       }
    },
-   "version" : "0.31"
+   "version" : "0.35"
 }

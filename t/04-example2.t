@@ -9,6 +9,6 @@ use lib::abs qw(../lib);
 
 my $app_root_path = lib::abs::path('.'); 
 
-do './ex/simple_example.pl';
+do './ex/change_engine_example.pl';
 
-ok (!$@, 'simple_example.pl worked');
+ok (!$@, 'change_engine_example.pl worked');

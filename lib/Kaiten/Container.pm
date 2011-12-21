@@ -4,19 +4,17 @@ use v5.10;
 use strict;
 use warnings FATAL => 'recursion';
 
-use constant::def DEBUG => $ENV{Kaiten_Container_DEBUG} || 0;
-
 =head1 NAME
 
 Kaiten::Container - Simples dependency-injection (DI) container, distant relation of IoC.
 
 =head1 VERSION
 
-Version 0.31
+Version 0.35
 
 =cut
 
-our $VERSION = '0.31';
+our $VERSION = '0.35';
 
 use Moo;
 
@@ -35,9 +33,9 @@ my $error = [
               'Warning: handler [%s] don`t pass [probe] check on reuse with message [ %s ], try to create new one, working ',
               'Error: handler [%s] don`t pass [probe] check on create, with message [ %s ], die  ',
               'Error: [init] value must be HASHREF only, die ',
-              'Error: [add_handler] method REQUIRE handlers at args, die',
+              'Error: [add] method REQUIRE handlers at args, die',
               'Error: handler [%s] exists, to rewrite handler remove it at first, die ',
-              'Error: [remove_handler] method REQUIRE handlers at args, die',
+              'Error: [remove] method REQUIRE handlers at args, die',
               'Error: handler [%s] NOT exists, nothing to remove, die ',
             ];
 
@@ -49,6 +47,16 @@ has 'init' => (
     },
     default => sub { {} },
               );
+
+has 'DEBUG' => (
+    is       => 'rw',
+    default => sub { 0 },
+);
+
+has 'CANCEL_REUSE' => (
+    is       => 'rw',
+    default => sub { 0 },
+);
 
 has '_cache' => (
                   is      => 'rw',
@@ -83,11 +91,23 @@ Ah, last but not least - KC MAY resolve deep dependencies, if you need it. Reall
          },
     };
 
-    my $container = Kaiten::Container->new( init => $config );
+    my $container = Kaiten::Container->new( init => $config, DEBUG => 1 );
     my $dbh = $container->get_by_name('ExampleP');
 
 All done, now we are have container and may get DB handler on call.
 Simple!
+
+=head1 SETTINGS
+
+=head2 C<DEBUG>
+
+This settings to show some debug information. To turn on set it to 1, by default disabled.
+
+=head2 C<CANCEL_REUSE>
+
+This settings suppress C<reusable> properties for all handlers in container. To turn on set it to 1, by default disabled.
+
+May be helpfully in test mode, when you need replace some method with mock, but suppose its already may be cached in descendant handlers. 
 
 =head1 SUBROUTINES/METHODS
 
@@ -205,12 +225,12 @@ sub get_by_name {
 
     my $reusable = defined $handler_config->{settings} && $handler_config->{settings}{reusable};
 
-    if ( $reusable && defined $self->_cache->{$handler_name} ) {
+    if ( !$self->CANCEL_REUSE && $reusable && defined $self->_cache->{$handler_name} ) {
         $result = $self->_cache->{$handler_name};
 
         # checkout handler and wipe it if it don`t pass [probe]
         unless ( eval { $handler_config->{probe}->($result) } ) {
-            carp sprintf( $error->[2], $handler_name, $@ ) if DEBUG;
+            carp sprintf( $error->[2], $handler_name, $@ ) if $self->DEBUG;
             $result = undef;
         }
     }
@@ -225,7 +245,7 @@ sub get_by_name {
     }
 
     # put it to cache if it used
-    $self->_cache->{$handler_name} = $result if $reusable;
+    $self->_cache->{$handler_name} = $result if ( !$self->CANCEL_REUSE && $reusable );
 
     return $result;
 }

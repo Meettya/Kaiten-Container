@@ -1,5 +1,6 @@
 Build.PL
 Changes
+ex/change_engine_example.pl
 ex/simple_example.pl
 ignore.txt
 lib/Kaiten/Container.pm
@@ -12,6 +13,7 @@ t/00-load.t
 t/01-functional.t
 t/02-deep_depency_resolving.t
 t/03-example.t
+t/04-example2.t
 t/boilerplate.t
 t/lib/Kaiten/Container/Test.pm
 t/lib/Kaiten/Container/TestDeepDependency.pm

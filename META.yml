@@ -4,10 +4,11 @@ author:
   - 'Meettya <meettya@cpan.org>'
 build_requires:
   DBI: 0
+  Moo: 0
+  Term::ANSIColor: 0
   Test::Class: 0
   Test::More: 0
   Test::Warn: 0
-  constant::abs: 0
   lib::abs: 0
 configure_requires:
   Module::Build: 0.38
@@ -21,15 +22,13 @@ name: Kaiten-Container
 provides:
   Kaiten::Container:
     file: lib/Kaiten/Container.pm
-    version: 0.31
+    version: 0.35
 requires:
   Carp: 0
   Moo: 0
   Scalar::Util: 0
-  constant::abs: 0
-  constant::def: 0
   perl: 5.01
 resources:
   license: http://dev.perl.org/licenses/
   repository: https://github.com/Meettya/Kaiten-Container/
-version: 0.31
+version: 0.35

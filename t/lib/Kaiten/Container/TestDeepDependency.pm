@@ -22,8 +22,7 @@ use DBI;
 
 use lib::abs qw(../../../../lib);
 
-# to turn on DEBUG mode
-use constant::abs 'Kaiten::Container::DEBUG' => 1;
+
 use Kaiten::Container;
 
 my $deep_dependency_linear = {
@@ -103,8 +102,8 @@ sub make_fixture : Test(setup) {
     my %init_deep_dependency_linear   = %$deep_dependency_linear;
     my %init_deep_dependency_circular = %$deep_dependency_circular;
 
-    $self->{linear}   = Kaiten::Container->new( init => \%init_deep_dependency_linear );
-    $self->{circular} = Kaiten::Container->new( init => \%init_deep_dependency_circular );
+    $self->{linear}   = Kaiten::Container->new( init => \%init_deep_dependency_linear, DEBUG => 1 );
+    $self->{circular} = Kaiten::Container->new( init => \%init_deep_dependency_circular, DEBUG => 1 );
 
 }
 
