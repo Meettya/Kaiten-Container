@@ -10,11 +10,11 @@ Kaiten::Container - Simples dependency-injection (DI) container, distant relatio
 
 =head1 VERSION
 
-Version 0.37
+Version 0.38
 
 =cut
 
-our $VERSION = '0.37';
+our $VERSION = '0.38';
 
 use Moo;
 
@@ -37,6 +37,7 @@ my $error = [
               'Error: handler [%s] exists, to rewrite handler remove it at first, die ',
               'Error: [remove] method REQUIRE handlers at args, die',
               'Error: handler [%s] NOT exists, nothing to remove, die ',
+              'Error: handler [%s] init wrong, not a HASH type, die '
             ];
 
 has 'init' => (
@@ -219,6 +220,7 @@ sub get_by_name {
     my $handler_config = $self->init->{$handler_name};
 
     croak sprintf( $error->[0], $handler_name ) unless defined $handler_config;
+    croak sprintf( $error->[9], $handler_name ) unless ( reftype $handler_config || '' ) eq 'HASH';
     croak sprintf( $error->[1], $handler_name ) unless defined $handler_config->{probe} && ( reftype $handler_config->{probe} || '' ) eq 'CODE';
 
     my $result;

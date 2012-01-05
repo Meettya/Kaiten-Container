@@ -1,5 +1,8 @@
 Revision history for Kaiten-Container
 
+0.38    2012-01-06 01:44 AM
+        Add handler type check at |get_by_name|.
+
 0.37    2011-12-22 01:24 AM
         Fix test - change |given| to |if|
 

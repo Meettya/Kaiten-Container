@@ -47,6 +47,7 @@ my $configutarion_explodable = {
                               settings => { reusable => 1 }
                             },
                  explode_now => { handler => sub { return 'ExplodeNowSQL there!' }, },
+                 explode_now2 => sub { handler => sub { return 'ExplodeNowSQL there!' }, },
 };
 #>>>
 
@@ -89,6 +90,15 @@ sub check_init_without_probe : Test(1) {
     my $object = $self->{connection_storage_explodable};
 
     is( !eval { $object->get_by_name('explode_now') }, $@ && $@ =~ /\[probe\] sub not defined/, 'probe checked at init' );
+
+}
+
+sub check_init_wrong_type : Test(1) {
+    my $self = shift;
+
+    my $object = $self->{connection_storage_explodable};
+
+    is( !eval { $object->get_by_name('explode_now2') }, $@ && $@ =~ /not a HASH type/, 'entity type checked at init' );
 
 }
 
